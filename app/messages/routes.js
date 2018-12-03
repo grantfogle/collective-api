@@ -17,6 +17,7 @@ router.post('/messages', (req, res, next) => {
     subject: req.body.subject,
     body: req.body.body,
     read: false,
+    selected: false,
     starred: false,
     labels: [],
   })
@@ -33,25 +34,36 @@ router.patch('/messages', (req, res, next) => {
 })
 
 const commands = {
-  star (message, cmd) {
+  star(message, cmd) {
     message.starred = !message.starred
   },
 
-  delete (message, cmd) {
+  delete(message, cmd) {
     db.messages.delete(message.id)
   },
 
-  read (message, cmd) {
+  read(message, cmd) {
     message.read = cmd.read
   },
 
-  addLabel (message, cmd) {
+  select(message, cmd) {
+    message.selected = !message.selected
+  },
+  allFalse(message, cmd) {
+    message.selected = false
+  },
+
+  allTrue(message, cmd) {
+    message.selected = true
+  },
+
+  addLabel(message, cmd) {
     if (!message.labels.includes(cmd.label)) {
       message.labels.push(cmd.label)
     }
   },
 
-  removeLabel (message, cmd) {
+  removeLabel(message, cmd) {
     if (message.labels.includes(cmd.label)) {
       message.labels.splice(message.labels.indexOf(cmd.label), 1)
     }
